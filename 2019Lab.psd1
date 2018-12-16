@@ -22,12 +22,18 @@
             IPAddress               = '10.10.0.100';
             DnsServerAddress        = '127.0.0.1';
             Lability_Media          = '2019_x64_Standard_EN_MSDN';
-        },
+        }
         @{
             NodeName                = 'RDS01';
             Role                    = 'RDS'
             Lability_ProcessorCount = 2;
-            Lability_Media          = '2019_x64_DataCenter_EN_Desktop_MSDN';
+            Lability_Media          = '2019_x64_DataCenter_EN_Desktop_MSDN';       
+        }
+        @{
+            NodeName                = 'WSUS01';
+            Role                    = 'WSUS'
+            Lability_ProcessorCount = 2;
+            Lability_Media          = '2019_x64_DataCenter_EN_Desktop_MSDN';       
         }
         @{
             NodeName                = 'CLIENT01';
