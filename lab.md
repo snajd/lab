@@ -19,3 +19,4 @@ about_bootstrap
 * default bootstrappas LocalConfiguration Manager
 * i ett exempel aktiverar han administratorkontot med net use, men detta är ju inte alls det jag vill 
   
+test
