@@ -8,13 +8,16 @@ Configuration WS2019Lab {
             xSmbShare:           https://github.com/PowerShell/xSmbShare
             xDhcpServer:         https://github.com/PowerShell/xDhcpServer
             xDnsServer:          https://github.com/PowerShell/xDnsServer
+
+        mina:
+            UpdateServicesDsc   https://github.com/mgreenegit/UpdateServicesDsc
     #>
         param (
             [Parameter()] [ValidateNotNull()] [PSCredential] $Credential = (Get-Credential -Credential 'Administrator')
         )
         Import-DscResource -Module xComputerManagement, xNetworking, xActiveDirectory;
         Import-DscResource -Module xSmbShare, PSDesiredStateConfiguration;
-        Import-DscResource -Module xDHCPServer, xDnsServer;
+        Import-DscResource -Module xDHCPServer, xDnsServer, UpdateServicesDsc;
     
         # detta gäller för alla noder:
         node $AllNodes.Where({$true}).NodeName {
@@ -220,6 +223,17 @@ Configuration WS2019Lab {
     
         node $AllNodes.Where({$_.Role -in 'WSUS'}).NodeName {
             # ok nu då?
+            UpdateServicesServer WSUSInstall {
+                
+                Ensure     = 'Present'
+                ContentDir = "C:\WSUS";
+                UpdateImprovementProgram = $false;
+                
+
+
+                
+            }
+        }
     
     } #end Configuration 
     
