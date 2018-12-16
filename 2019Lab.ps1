@@ -16,6 +16,7 @@ Configuration WS2019Lab {
         Import-DscResource -Module xSmbShare, PSDesiredStateConfiguration;
         Import-DscResource -Module xDHCPServer, xDnsServer;
     
+        # detta gäller för alla noder:
         node $AllNodes.Where({$true}).NodeName {
     
             LocalConfigurationManager {
@@ -26,6 +27,7 @@ Configuration WS2019Lab {
                 CertificateID        = $node.Thumbprint;
             }
     
+            # om en IP inställningar är specificerade:
             if (-not [System.String]::IsNullOrEmpty($node.IPAddress)) {
     
                 xIPAddress 'PrimaryIPAddress' {
@@ -67,6 +69,7 @@ Configuration WS2019Lab {
     
             } #end if IPAddress
     
+            # alla burkar ska svara på ping
             xFirewall 'FPS-ICMP4-ERQ-In' {
     
                 Name        = 'FPS-ICMP4-ERQ-In';
@@ -153,6 +156,7 @@ Configuration WS2019Lab {
                 DependsOn          = '[xDhcpServerScope]DhcpScope10_10_0_0';
             }
     
+            # Detta borde ersättas med nån json-grej
             xADUser User1 {
     
                 DomainName  = $node.DomainName;
@@ -200,7 +204,7 @@ Configuration WS2019Lab {
         } #end nodes DC
     
         ## om man inte är en DC
-        node $AllNodes.Where({$_.Role -in 'CLIENT','RDS'}).NodeName {
+        node $AllNodes.Where({$_.Role -notin 'DC'}).NodeName {
     
             ## Flip credential into username@domain.com
             $upn = '{0}@{1}' -f $Credential.UserName, $node.DomainName;
@@ -214,7 +218,9 @@ Configuration WS2019Lab {
             }
         } #end nodes DomainJoined
     
+        node $AllNodes.Where({$_.Role -in 'WSUS'}).NodeName {
+            # ok nu då?
     
-    } #end Configuration Example
+    } #end Configuration 
     
 WS2019Lab -ConfigurationData C:\GitHub\lab\2019Lab.psd1
