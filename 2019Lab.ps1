@@ -136,27 +136,27 @@ Configuration WS2019Lab {
                 DependsOn = '[WindowsFeature]DHCP','[xADDomain]ADDomain';
             }
     
-            xDhcpServerScope 'DhcpScope10_10_0_0' {
+            xDhcpServerScope 'LabDHCPScope' {
                 
-                ScopeId       = '10.10.0.0' 
-                Name          = 'Corpnet';
-                IPStartRange  = '10.10.0.150';
-                IPEndRange    = '10.10.0.200';
-                SubnetMask    = '255.255.255.0';
-                LeaseDuration = '00:08:00';
-                State         = 'Active';
-                AddressFamily = 'IPv4';
+                ScopeId       = $ConfigurationData.LabDHCPConfig.ScopeID;
+                Name          = $ConfigurationData.LabDHCPConfig.Name;
+                IPStartRange  = $ConfigurationData.LabDHCPConfig.IPStartRange;
+                IPEndRange    = $ConfigurationData.LabDHCPConfig.IPEndRange;
+                SubnetMask    = $ConfigurationData.LabDHCPConfig.SubnetMask;
+                LeaseDuration = $ConfigurationData.LabDHCPConfig.LeaseDuration;
+                State         = $ConfigurationData.LabDHCPConfig.State;
+                AddressFamily = $ConfigurationData.LabDHCPConfig.AddressFamily;
                 DependsOn     = '[WindowsFeature]DHCP';
             }
     
-            xDhcpServerOption 'DhcpScope10_10_0_0_Option' {
+            xDhcpServerOption 'DhcpScopeLabDHCPScopeOption' {
     
-                ScopeID            = '10.10.0.0';
-                DnsDomain          = 'lab.nortonnet.se';
-                DnsServerIPAddress = '10.10.0.100';
-                Router             = '10.10.0.254';
-                AddressFamily      = 'IPv4';
-                DependsOn          = '[xDhcpServerScope]DhcpScope10_10_0_0';
+                ScopeID            = $ConfigurationData.LabDHCPConfig.ScopeID;
+                DnsDomain          = $ConfigurationData.LabDHCPConfig.DnsDomain;
+                DnsServerIPAddress = $ConfigurationData.LabDHCPConfig.DnsServerAddress;
+                Router             = $ConfigurationData.LabDHCPConfig.Router;
+                AddressFamily      = $ConfigurationData.LabDHCPConfig.AddressFamily;
+                DependsOn          = '[xDhcpServerScope]LabDHCPScope';
             }
     
             # Detta borde ersättas med nån json-grej

@@ -43,6 +43,26 @@
         }
 
     )
+    
+    # flyttar bort information från konfigurationsscriptet för att göra det enklare att uppdatera.
+    LabADDomainConfig = @{
+        DomainName = "lab.nortonnet.se"
+
+    }
+    LabDHCPConfig = @{
+        ScopeId            = "10.10.0.0"
+        Name               = "NortonLab LAN"
+        IPStartRange       = '10.10.0.150';
+        IPEndRange         = '10.10.0.200';
+        SubnetMask         = '255.255.255.0';
+        LeaseDuration      = '00:08:00';
+        State              = 'Active';
+        AddressFamily      = 'IPv4';
+        DnsDomain          = 'lab.nortonnet.se';
+        DnsServerIPAddress = '10.10.0.100';
+        Router             = '10.10.0.254';
+    }
+    
     NonNodeData = @{
         Lability = @{
             # se till att man kan köra VBS
@@ -63,6 +83,7 @@
                 @{ Name = 'xActiveDirectory'}
                 @{ Name = 'xDnsServer'}
                 @{ Name = 'xDhcpServer'}
+                @{ Name = 'UpdateServicesDSC'}
                 ## The 'GitHub# provider can download modules directly from a GitHub repository, for example:
                 ## @{ Name = 'Lability'; Provider = 'GitHub'; Owner = 'VirtualEngine'; Repository = 'Lability'; Branch = 'dev'; }
             );

@@ -18,5 +18,10 @@ about_bootstrap
 * en boostrap kan höra ihop med ett media
 * default bootstrappas LocalConfiguration Manager
 * i ett exempel aktiverar han administratorkontot med net use, men detta är ju inte alls det jag vill 
-  
-test
+
+För att tvinga DSC att köra den laddade konfigurationen en gång till
+start-dscconfiguration -UseExisting
+
+Visar objektet och properties
+Get-DscResource UpdateServicesServer -Syntax
+
