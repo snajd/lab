@@ -221,20 +221,27 @@ Configuration WS2019Lab {
             }
         } #end nodes DomainJoined
     
-        node $AllNodes.Where({$_.Role -in 'WSUS'}).NodeName {
-            # ok nu då?
+        node $AllNodes.Where({$_.Role -in 'WSUS'}).NodeName {  
+            WindowsFeature WSUS {
+                Name = "UpdateServices";
+                Ensure = "Present";
+            }         
             UpdateServicesServer WSUSInstall {
                 
                 Ensure     = 'Present'
                 ContentDir = "C:\WSUS";
                 UpdateImprovementProgram = $false;
-                
-
-
-                
+              
             }
+        }
+
+        # START SCCM CONFIG
+        node $Allnodes.Where({$_Role -in 'SCCM'}).NodeName {
+
+
         }
     
     } #end Configuration 
     
 WS2019Lab -ConfigurationData C:\GitHub\lab\2019Lab.psd1
+Copy-Item .\WS2019Lab\*.mof C:\Lability\Configurations

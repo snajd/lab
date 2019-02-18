@@ -36,7 +36,33 @@
             Lability_Media          = '2019_x64_DataCenter_EN_Desktop_MSDN';       
         }
         @{
+            NodeName                = 'CM01';
+            Role                    = 'SCCM-Site-Server'
+            Lability_ProcessorCount = 4;
+            Lability_StartupMemory  = 8GB;
+            Lability_Media          = '2019_x64_DataCenter_EN_Desktop_MSDN';
+            # create empty data disk
+            Lability_HardDiskDrive  = @(
+                @{
+                    Generation          =   "VHDX";
+                    MaximumSizeBytes    =   127GB;
+                }
+            )       
+        }
+        @{
             NodeName                = 'CLIENT01';
+            Role                    = 'CLIENT'
+            Lability_ProcessorCount = 2;
+            Lability_Media          = 'WIN10_1809_x64_Enterprise_EN_MSDN';
+        }
+        @{
+            NodeName                = 'CLIENT02';
+            Role                    = 'CLIENT'
+            Lability_ProcessorCount = 2;
+            Lability_Media          = 'WIN10_1809_x64_Enterprise_EN_MSDN';
+        }
+        @{
+            NodeName                = 'CLIENT03';
             Role                    = 'CLIENT'
             Lability_ProcessorCount = 2;
             Lability_Media          = 'WIN10_1809_x64_Enterprise_EN_MSDN';
@@ -59,6 +85,7 @@
         State              = 'Active';
         AddressFamily      = 'IPv4';
         DnsDomain          = 'lab.nortonnet.se';
+        DnsServerAddress   = "10.10.0.100"
         DnsServerIPAddress = '10.10.0.100';
         Router             = '10.10.0.254';
     }
