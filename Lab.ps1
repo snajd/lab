@@ -1,4 +1,4 @@
-Configuration WS2019Lab {
+Configuration Lab {
     <#
         Requires the following custom DSC resources:
     
@@ -8,6 +8,8 @@ Configuration WS2019Lab {
             xSmbShare:           https://github.com/PowerShell/xSmbShare
             xDhcpServer:         https://github.com/PowerShell/xDhcpServer
             xDnsServer:          https://github.com/PowerShell/xDnsServer
+            UpdateServicesDsc:   https://github.com/PowerShell/UpdateServerDsc
+            SqlServerDsc:        https://github.com/PowerShell/SqlServerDsc
 
         mina:
             UpdateServicesDsc   https://github.com/mgreenegit/UpdateServicesDsc
@@ -18,6 +20,7 @@ Configuration WS2019Lab {
         Import-DscResource -Module xComputerManagement, xNetworking, xActiveDirectory;
         Import-DscResource -Module xSmbShare, PSDesiredStateConfiguration;
         Import-DscResource -Module xDHCPServer, xDnsServer, UpdateServicesDsc;
+        Import-DscResource -Module SqlServerDsc;
     
         # detta gäller för alla noder:
         node $AllNodes.Where({$true}).NodeName {
@@ -134,8 +137,65 @@ Configuration WS2019Lab {
     
                 Ensure    = 'Present';
                 DependsOn = '[WindowsFeature]DHCP','[xADDomain]ADDomain';
+                #PsDscRunAsCredential = Get-Credential
             }
-    
+            
+            # för varje scope.
+            foreach ($DHCPScope in $ConfigurationData.LabDHCPConfig) {
+
+                #döp scope till ScopeID och ersätt punkter med underscore
+                xDhcpServerScope $DHCPScope.ScopeId.Replace(".","_") {
+                    ScopeId       = $DHCPScope.ScopeID;
+                    Name          = $DHCPScope.Name;
+                    IPStartRange  = $DHCPScope.IPStartRange;
+                    IPEndRange    = $DHCPScope.IPEndRange;
+                    SubnetMask    = $DHCPScope.SubnetMask;
+                    LeaseDuration = $DHCPScope.LeaseDuration;
+                    State         = $DHCPScope.State;
+                    AddressFamily = $DHCPScope.AddressFamily;
+                    DependsOn     = '[WindowsFeature]DHCP';
+                }
+                #if ($DHCP.ScopeOptions) {
+                    foreach ($ScopeOption in $DHCPScope.ScopeOptions) {
+                        #$number = 1
+                        DhcpScopeOptionValue ($ScopeOption.Name + "-" + $DHCPScope.ScopeID){
+                            ScopeId         = $DHCPScope.ScopeID;
+                            OptionId        = $ScopeOption.OptionId;
+                            Value           = $ScopeOption.Value;
+                            AddressFamily   = "IPv4";
+                            Ensure          = "Present";       
+                            #VendorClass     = $ScopeOption.VendorClass;
+                            VendorClass     = "";  
+                            #UserClass       = $ScopeOption.UserClass;
+                            UserClass       = "";
+                        } 
+                        #$number++
+                    
+                    }
+                #}   
+            } # end DHCPScope
+        
+        <#
+        # DNS Zone (behöver definieras för att xDnsRecord kräver en zon)
+        xDnsServerAdZone ADintegratedDNSZone {
+            Name = $ConfigurationData.LabADDomainConfig.DomainName
+            Ensure = "Present"
+
+        }#>
+
+        
+        # DNS records
+        foreach ($DNSRecord in $ConfigurationData.LabDNSRecords) {
+            xDnsRecord $DNSRecord.Target.Replace(".","_") {
+                Name        = $DNSRecord.Name;
+                Target      = $DNSRecord.Target;
+                Type        = $DNSRecord.Type;
+                Zone        = $ConfigurationData.LabADDomainConfig.DomainName # samma som domännamnet borde väl vara safe.
+            }
+        }
+
+
+ <#         
             xDhcpServerScope 'LabDHCPScope' {
                 
                 ScopeId       = $ConfigurationData.LabDHCPConfig.ScopeID;
@@ -149,7 +209,8 @@ Configuration WS2019Lab {
                 DependsOn     = '[WindowsFeature]DHCP';
             }
     
-            xDhcpServerOption 'DhcpScopeLabDHCPScopeOption' {
+            # sätt alla scope options för alla definierade scopes.
+            xDhcpScopeOption 'DhcpScopeLabDHCPScopeOption' {
     
                 ScopeID            = $ConfigurationData.LabDHCPConfig.ScopeID;
                 DnsDomain          = $ConfigurationData.LabDHCPConfig.DnsDomain;
@@ -158,7 +219,7 @@ Configuration WS2019Lab {
                 AddressFamily      = $ConfigurationData.LabDHCPConfig.AddressFamily;
                 DependsOn          = '[xDhcpServerScope]LabDHCPScope';
             }
-    
+ #>    
             # Detta borde ersättas med nån json-grej
             xADUser User1 {
     
@@ -238,10 +299,14 @@ Configuration WS2019Lab {
         # START SCCM CONFIG
         node $Allnodes.Where({$_Role -in 'SCCM'}).NodeName {
 
+            # kolla om Profile är Site Server, i så fall installera SQL
+            # sql
+
+
 
         }
     
     } #end Configuration 
     
-WS2019Lab -ConfigurationData C:\GitHub\lab\2019Lab.psd1
-Copy-Item .\WS2019Lab\*.mof C:\Lability\Configurations
+Lab -ConfigurationData C:\GitHub\lab\Lab.psd1
+Copy-Item .\Lab\*.mof C:\Lability\Configurations

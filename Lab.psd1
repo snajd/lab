@@ -37,7 +37,8 @@
         }
         @{
             NodeName                = 'CM01';
-            Role                    = 'SCCM-Site-Server'
+            Role                    = 'SCCM'
+            Type                    = 'Site Server'
             Lability_ProcessorCount = 4;
             Lability_StartupMemory  = 8GB;
             Lability_Media          = '2019_x64_DataCenter_EN_Desktop_MSDN';
@@ -75,20 +76,92 @@
         DomainName = "lab.nortonnet.se"
 
     }
-    LabDHCPConfig = @{
-        ScopeId            = "10.10.0.0"
-        Name               = "NortonLab LAN"
-        IPStartRange       = '10.10.0.150';
-        IPEndRange         = '10.10.0.200';
-        SubnetMask         = '255.255.255.0';
-        LeaseDuration      = '00:08:00';
-        State              = 'Active';
-        AddressFamily      = 'IPv4';
-        DnsDomain          = 'lab.nortonnet.se';
-        DnsServerAddress   = "10.10.0.100"
-        DnsServerIPAddress = '10.10.0.100';
-        Router             = '10.10.0.254';
-    }
+
+    # statiska DNS records
+    #
+    # Finns tå stycken resurstyper i xDnsServer: xDnsRecord och xDnsARecord (denna är flaggad för att komma tas bort i senare release)
+
+
+    LabDNSRecords = @(
+        @{
+            Name = "test";
+            Target = "10.10.0.123";
+            # Zone = behöver inte hårdlödas här
+            Type = "ARecord";
+        }
+        @{
+            Name = "test-alias";
+            Target = "test.lab.nortonnet.se";
+            Type = "CName"
+        }
+    )
+
+
+    LabDHCPConfig = @(
+        @{
+            ScopeId            = "10.10.0.0"
+            Name               = "NortonLab LAN"
+            IPStartRange       = '10.10.0.150';
+            IPEndRange         = '10.10.0.200';
+            SubnetMask         = '255.255.255.0';
+            # LeaseDuration      = ((New-TimeSpan -Hours 8).ToString());
+            LeaseDuration      = "08:00:00"
+            State              = 'Active';
+            AddressFamily      = 'IPv4';
+            DnsDomain          = 'lab.nortonnet.se';
+            # DnsServerAddress   = "10.10.0.100"
+            # DnsServerIPAddress = '10.10.0.100';
+            ScopeOptions = @(
+                @{
+                    Name          = "DnsServerIPAddress"
+                    OptionID      = 6
+                    Value         = "10.10.0.100"
+                }
+                @{
+                    Name          = "Router"
+                    OptionID      = 3
+                    Value         = "10.10.0.1"
+                }
+
+            )  
+        }
+        @{
+            ScopeId            = "10.10.1.0"
+            Name               = "NortonLab LAN 2"
+            IPStartRange       = '10.10.1.150';
+            IPEndRange         = '10.10.1.200';
+            SubnetMask         = '255.255.255.0';
+            LeaseDuration      = "08:00:00"
+            State              = 'Active';
+            AddressFamily      = 'IPv4';
+            DnsDomain          = 'lab.nortonnet.se';
+            # DnsServerAddress   = "10.10.1.100"
+            # DnsServerIPAddress = '10.10.1.100';
+            ScopeOptions = @(
+                @{
+                    Name          = "DnsServerIPAddress"
+                    OptionID      = 6
+                    Value         = "10.10.1.100"
+                }
+                @{
+                    Name    	  = "Router"
+                    OptionID      = 3
+                    Value         = "10.10.1.1"
+                }
+                @{
+                    Name          = "BootServer"
+                    OptionID      = 66
+                    Value         = "testserver.com"
+                }
+                @{
+                    Name          = "Bootfile"
+                    OptionID      = 67
+                    Value         = "fil.pxe"
+                }
+            )
+            
+        }   
+    )
     
     NonNodeData = @{
         Lability = @{
@@ -110,7 +183,8 @@
                 @{ Name = 'xActiveDirectory'}
                 @{ Name = 'xDnsServer'}
                 @{ Name = 'xDhcpServer'}
-                @{ Name = 'UpdateServicesDSC'}
+                @{ Name = 'UpdateServicesDsc'}
+                @{ Name = 'SqlServerDsc'}
                 ## The 'GitHub# provider can download modules directly from a GitHub repository, for example:
                 ## @{ Name = 'Lability'; Provider = 'GitHub'; Owner = 'VirtualEngine'; Repository = 'Lability'; Branch = 'dev'; }
             );
