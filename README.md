@@ -35,3 +35,5 @@ Visar objektet och properties
 ```powershell
 Get-DscResource UpdateServicesServer -Syntax
 ```
+
+hej hej stenis
