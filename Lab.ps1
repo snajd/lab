@@ -11,9 +11,7 @@ Configuration Lab {
             UpdateServicesDsc:   https://github.com/PowerShell/UpdateServerDsc
             SqlServerDsc:        https://github.com/PowerShell/SqlServerDsc
 
-        mina:
-            UpdateServicesDsc   https://github.com/mgreenegit/UpdateServicesDsc
-    #>
+        #>
         param (
             [Parameter()] [ValidateNotNull()] [PSCredential] $Credential = (Get-Credential -Credential 'Administrator')
         )

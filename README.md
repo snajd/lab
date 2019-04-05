@@ -23,9 +23,15 @@ about_bootstrap
 * default bootstrappas LocalConfiguration Manager
 * i ett exempel aktiverar han administratorkontot med net use, men detta är ju inte alls det jag vill 
 
-För att tvinga DSC att köra den laddade konfigurationen en gång till
-start-dscconfiguration -UseExisting
+För att tvinga DSC att köra den laddade konfigurationen en gång till. Lägg till -force för att låta bli att vänta på att en tidigare konfig ska konvergeras.
+
+```powershell
+start-dscconfiguration -UseExisting -force
+eller:
+start-dscconfiguration -path <path>
+```
 
 Visar objektet och properties
+```powershell
 Get-DscResource UpdateServicesServer -Syntax
-
+```
