@@ -1,3 +1,7 @@
+# Detta ska du inte läsa Jocke.
+
+Det är mina högst privata anteckningar.
+
 Fram till hit har jag bara typ fattat vad psd1 och ps1 gör, samt moddat Example-confen.
 Men nu vill jag göra en WSUS.
 
