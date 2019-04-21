@@ -15,7 +15,7 @@ Configuration Lab {
         param (
             [Parameter()] [ValidateNotNull()] [PSCredential] $Credential = (Get-Credential -Credential 'Administrator')
         )
-        Import-DscResource -Module xComputerManagement, xNetworking, xActiveDirectory;
+        Import-DscResource -Module xComputerManagement, NetworkingDsc, xActiveDirectory;
         Import-DscResource -Module xSmbShare, PSDesiredStateConfiguration;
         Import-DscResource -Module xDHCPServer, xDnsServer, UpdateServicesDsc;
         Import-DscResource -Module SqlServerDsc;
@@ -34,7 +34,7 @@ Configuration Lab {
             # om en IP inställningar är specificerade:
             if (-not [System.String]::IsNullOrEmpty($node.IPAddress)) {
     
-                xIPAddress 'PrimaryIPAddress' {
+                IPAddress 'PrimaryIPAddress' {
     
                     IPAddress      = $node.IPAddress;
                     InterfaceAlias = $node.InterfaceAlias;
@@ -44,7 +44,7 @@ Configuration Lab {
     
                 if (-not [System.String]::IsNullOrEmpty($node.DefaultGateway)) {
     
-                    xDefaultGatewayAddress 'PrimaryDefaultGateway' {
+                    DefaultGatewayAddress 'PrimaryDefaultGateway' {
     
                         InterfaceAlias = $node.InterfaceAlias;
                         Address        = $node.DefaultGateway;
@@ -54,7 +54,7 @@ Configuration Lab {
     
                 if (-not [System.String]::IsNullOrEmpty($node.DnsServerAddress)) {
     
-                    xDnsServerAddress 'PrimaryDNSClient' {
+                    DnsServerAddress 'PrimaryDNSClient' {
     
                         Address        = $node.DnsServerAddress;
                         InterfaceAlias = $node.InterfaceAlias;
@@ -64,7 +64,7 @@ Configuration Lab {
     
                 if (-not [System.String]::IsNullOrEmpty($node.DnsConnectionSuffix)) {
     
-                    xDnsConnectionSuffix 'PrimaryConnectionSuffix' {
+                    DnsConnectionSuffix 'PrimaryConnectionSuffix' {
     
                         InterfaceAlias           = $node.InterfaceAlias;
                         ConnectionSpecificSuffix = $node.DnsConnectionSuffix;
@@ -74,7 +74,7 @@ Configuration Lab {
             } #end if IPAddress
     
             # alla burkar ska svara på ping
-            xFirewall 'FPS-ICMP4-ERQ-In' {
+            Firewall 'FPS-ICMP4-ERQ-In' {
     
                 Name        = 'FPS-ICMP4-ERQ-In';
                 DisplayName = 'File and Printer Sharing (Echo Request - ICMPv4-In)';
@@ -85,7 +85,7 @@ Configuration Lab {
                 Profile     = 'Any';
             }
     
-            xFirewall 'FPS-ICMP6-ERQ-In' {
+            Firewall 'FPS-ICMP6-ERQ-In' {
     
                 Name        = 'FPS-ICMP6-ERQ-In';
                 DisplayName = 'File and Printer Sharing (Echo Request - ICMPv6-In)';
@@ -306,5 +306,5 @@ Configuration Lab {
     
     } #end Configuration 
     
-Lab -ConfigurationData C:\GitHub\lab\Lab.psd1
+Lab -ConfigurationData .\Lab.psd1
 Copy-Item .\Lab\*.mof C:\Lability\Configurations

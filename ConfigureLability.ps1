@@ -13,14 +13,14 @@ $LabDefaultVMParameters = @{
     RegisteredOwner = 'snajd'
     RegisteredOrganization = 'LABLABLAB'
     TimeZone = 'W. Europe Standard Time'
-    SwitchName = 'Lab-NAT'
+    SwitchName = 'INTERNAL'
 }
 
 Set-LabVMDefault @LabDefaultVMParameters
 
 # If necessary, create a new virtual switch. This is an example of creating an Internal switch which uses NAT for external VM connectivity:
 
-New-VMSwitch -Name 'Lab-NAT' -SwitchType Internal
+#New-VMSwitch -Name 'INTERNAL' -SwitchType Internal
 
 $NICAlias = (Get-NetAdapter 'vEthernet (Lab-NAT)').Name
 New-NetIPAddress -IPAddress 10.1.1.0 -PrefixLength 24 -InterfaceAlias $NICAlias

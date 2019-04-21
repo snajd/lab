@@ -21,19 +21,25 @@
             Lability_ProcessorCount = 2;
             IPAddress               = '10.10.0.100';
             DnsServerAddress        = '127.0.0.1';
-            Lability_Media          = '2019_x64_Standard_EN_MSDN';
+            Lability_Media          = '2019_x64_Standard_EN_Core_Eval';
         }
         @{
             NodeName                = 'RDS01';
             Role                    = 'RDS'
             Lability_ProcessorCount = 2;
-            Lability_Media          = '2019_x64_DataCenter_EN_Desktop_MSDN';       
+            Lability_Media          = '2019_x64_Standard_EN_Eval';       
         }
         @{
             NodeName                = 'WSUS01';
             Role                    = 'WSUS'
             Lability_ProcessorCount = 2;
-            Lability_Media          = '2019_x64_DataCenter_EN_Desktop_MSDN';       
+            Lability_Media          = '2019_x64_Standard_EN_Eval';       
+        }
+        @{
+            NodeName                = 'SRV01';
+            Role                    = ''
+            Lability_ProcessorCount = 2;
+            Lability_Media          = '2019_x64_Standard_EN_Eval';       
         }
         @{
             NodeName                = 'CM01';
@@ -41,7 +47,7 @@
             Type                    = 'Site Server'
             Lability_ProcessorCount = 4;
             Lability_StartupMemory  = 8GB;
-            Lability_Media          = '2019_x64_DataCenter_EN_Desktop_MSDN';
+            Lability_Media          = '2019_x64_Standard_EN_Eval';
             # create empty data disk
             Lability_HardDiskDrive  = @(
                 @{
@@ -54,19 +60,19 @@
             NodeName                = 'CLIENT01';
             Role                    = 'CLIENT'
             Lability_ProcessorCount = 2;
-            Lability_Media          = 'WIN10_1809_x64_Enterprise_EN_MSDN';
+            Lability_Media          = 'WIN10_x64_Enterprise_EN_Eval';
         }
         @{
             NodeName                = 'CLIENT02';
             Role                    = 'CLIENT'
             Lability_ProcessorCount = 2;
-            Lability_Media          = 'WIN10_1809_x64_Enterprise_EN_MSDN';
+            Lability_Media          = 'WIN10_x64_Enterprise_EN_Eval';
         }
         @{
             NodeName                = 'CLIENT03';
             Role                    = 'CLIENT'
             Lability_ProcessorCount = 2;
-            Lability_Media          = 'WIN10_1809_x64_Enterprise_EN_MSDN';
+            Lability_Media          = 'WIN10_x64_Enterprise_EN_Eval';
         }
 
     )
@@ -179,7 +185,7 @@
                 @{ Name = 'xComputerManagement'}
                 ## If not specified, the provider defaults to the PSGallery.
                 @{ Name = 'xSmbShare'}
-                @{ Name = 'xNetworking'}
+                @{ Name = 'NetworkingDsc'}
                 @{ Name = 'xActiveDirectory'}
                 @{ Name = 'xDnsServer'}
                 @{ Name = 'xDhcpServer'}
